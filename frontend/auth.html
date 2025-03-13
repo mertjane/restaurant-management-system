@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restaurant Management System</title>
+    <link rel="stylesheet" href="/frontend/css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="site-header">
+        <h2>Management System</h2>
+      </header>
+      <main>
+        <section class="login">
+          <h2>Login</h2>
+          <form action="login.php" method="post">
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" required />
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" required />
+            <a href="#">Forgot password</a>
+            <button type="submit">Login</button>
+          </form>
+        </section>
+      </main>
+      <footer class="site-footer">
+        <p>&copy; 2025 Restaurant Management System</p>
+      </footer>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector("form");
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          const username = document.querySelector("#username");
+          const password = document.querySelector("#password");
+          
+          username.addEventListener("input", function () {
+            if (username.value.length < 5 || username.value.length > 20) {
+              
+            } else {
+              username.setCustomValidity("");
+            }
+          })
+
+        });
+      });
+    </script>
+  </body>
+</html>
