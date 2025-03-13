@@ -8,18 +8,75 @@
   </head>
   <body>
     <div class="container">
-      <header class="site-header">
+      <!-- notify -->
+      <div id="success-message" class="success-message">
+        <svg
+          viewBox="0 0 512 512"
+          version="1.1"
+          height="16px"
+          width="16px"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          fill="#000000"
+        >
+          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+          <g
+            id="SVGRepo_tracerCarrier"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></g>
+          <g id="SVGRepo_iconCarrier">
+            <title>success-filled</title>
+            <g
+              id="Page-1"
+              stroke="none"
+              stroke-width="1"
+              fill="none"
+              fill-rule="evenodd"
+            >
+              <g
+                id="add-copy-2"
+                fill="#1ce333"
+                transform="translate(42.666667, 42.666667)"
+              >
+                <path
+                  d="M213.333333,3.55271368e-14 C95.51296,3.55271368e-14 3.55271368e-14,95.51296 3.55271368e-14,213.333333 C3.55271368e-14,331.153707 95.51296,426.666667 213.333333,426.666667 C331.153707,426.666667 426.666667,331.153707 426.666667,213.333333 C426.666667,95.51296 331.153707,3.55271368e-14 213.333333,3.55271368e-14 Z M293.669333,137.114453 L323.835947,167.281067 L192,299.66912 L112.916693,220.585813 L143.083307,190.4192 L192,239.335893 L293.669333,137.114453 Z"
+                  id="Shape"
+                ></path>
+              </g>
+            </g>
+          </g>
+        </svg>
+        <span>Successfully logged in!</span>
+      </div>
+      <header class="auth-site-header">
         <h2>Management System</h2>
       </header>
       <main>
         <section class="login">
           <h2>Login</h2>
           <form action="login.php" method="post">
-            <label for="username">Username</label>
-            <input type="text" name="username" id="username" required />
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" required />
-            <a href="#">Forgot password</a>
+            <div class="input-wrapper">
+              <label for="username" id="username-label">Username</label>
+              <input
+                type="text"
+                name="username"
+                id="username"
+                placeholder="Enter your username"
+              />
+              <p id="username-error"></p>
+            </div>
+            <div class="input-wrapper">
+              <label for="password" id="pwd-label">Password</label>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                placeholder="Enter your password"
+              />
+              <p id="pwd-error"></p>
+              <a href="#">Forgot password</a>
+            </div>
             <button type="submit">Login</button>
           </form>
         </section>
@@ -28,24 +85,6 @@
         <p>&copy; 2025 Restaurant Management System</p>
       </footer>
     </div>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const form = document.querySelector("form");
-        form.addEventListener("submit", function (event) {
-          event.preventDefault();
-          const username = document.querySelector("#username");
-          const password = document.querySelector("#password");
-          
-          username.addEventListener("input", function () {
-            if (username.value.length < 5 || username.value.length > 20) {
-              
-            } else {
-              username.setCustomValidity("");
-            }
-          })
-
-        });
-      });
-    </script>
+    <script defer src="./js/script.js"></script>
   </body>
 </html>

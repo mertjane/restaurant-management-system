@@ -79,7 +79,7 @@
               </g>
             </svg>
           </li>
-          <li>
+          <li id="toggleDropdown">
             <a href="#">Profile</a>
             <svg
               height="12px"
@@ -110,6 +110,15 @@
               </g>
             </svg>
           </li>
+          <!-- dropdown -->
+          <ul class="dropdown" id="dropdown">
+            <li>
+              <a href="#" title="Account Settings">Account Settings</a>
+            </li>
+            <li>
+              <a href="#" id="logout">Logout</a>
+            </li>
+          </ul>
         </ul>
       </header>
       <aside class="sidebar active">
@@ -152,13 +161,63 @@
     </div>
 
     <script>
-      document
-        .getElementById("toggleSidebar")
-        .addEventListener("click", function () {
-          document.querySelector(".sidebar").classList.toggle("active");
-          document.querySelector(".site-header").classList.toggle("active");
-          document.querySelector(".main-content").classList.toggle("active");
+      document.addEventListener("DOMContentLoaded", function () {
+        const client = JSON.parse(sessionStorage.getItem("client"));
+
+        // If no client is found, redirect to auth.html
+        if (!client || !client.isLoggedin) {
+          window.location.href = "auth.html";
+        }
+
+        // dropdown toggle
+        const openDropdown = document.getElementById("toggleDropdown");
+        const dropdown = document.getElementById("dropdown");
+        let isActive = false;
+
+
+        openDropdown.addEventListener("click", function () {
+          
+          event.stopPropagation(); // Prevent click from propagating to document
+          dropdown.classList.toggle("active");
+          isActive = !isActive;
+
+          if(isActive) {
+            document.getElementById("Capa_1").style.transform = "rotate(180deg)";
+            document.getElementById("Capa_1").style.transition = "transform 0.3s";
+          } else {
+            document.getElementById("Capa_1").style.transform = "rotate(0deg)";
+          }
         });
+
+        // Close dropdown when clicking outside
+        document.addEventListener("click", function (event) {
+          if (
+            !dropdown.contains(event.target) &&
+            !openDropdown.contains(event.target)
+          ) {
+            dropdown.classList.remove("active");
+            document.getElementById("Capa_1").style.transform = "rotate(0deg)";
+            document.getElementById("Capa_1").style.transition = "transform 0.3s";
+          }
+        });
+
+        // Sidebar toggle
+        document
+          .getElementById("toggleSidebar")
+          .addEventListener("click", function () {
+            document.querySelector(".sidebar").classList.toggle("active");
+            document.querySelector(".site-header").classList.toggle("active");
+            document.querySelector(".main-content").classList.toggle("active");
+          });
+
+        // Logout function
+        document
+          .getElementById("logout")
+          .addEventListener("click", function () {
+            sessionStorage.removeItem("client"); // Clear stored login data
+            window.location.href = "auth.html"; // Redirect to login
+          });
+      });
     </script>
   </body>
 </html>
