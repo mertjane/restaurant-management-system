@@ -13,6 +13,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // If client exists and is logged in, redirect to dashboard
   if (client && client.isLoggedin) {
     window.location.href = "dashboard.html";
+  } else {
+    document.body.style.display = "block"; // Show page only if not logged in
   }
 
   function validateUsername() {

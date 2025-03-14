@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Restaurant Dashboard</title>
     <link rel="stylesheet" href="/frontend/css/style.css" />
+    <style>
+      body {
+        display: none; /* Hide the page initially */
+      }
+    </style>
   </head>
   <body>
     <div class="dashboard-container">
@@ -35,12 +40,13 @@
           </svg>
         </div>
         <ul>
-          <li>
+          <li title="Notification" id="notif-toggle">
             <svg
               viewBox="0 0 24 24"
               fill="none"
-              width="24px"
-              height="24px"
+              width="26px"
+              height="26px"
+              style="position: relative; top: 3px;margin-right: 2em;"
               xmlns="http://www.w3.org/2000/svg"
             >
               <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -79,72 +85,90 @@
               </g>
             </svg>
           </li>
-          <li id="toggleDropdown">
-            <a href="#">Profile</a>
-            <svg
-              height="12px"
-              width="12px"
-              version="1.1"
-              id="Capa_1"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              viewBox="0 0 185.344 185.344"
-              xml:space="preserve"
-              fill="#000000"
-            >
-              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-              <g
-                id="SVGRepo_tracerCarrier"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              ></g>
-              <g id="SVGRepo_iconCarrier">
-                <g>
-                  <g>
-                    <path
-                      style="fill: #333"
-                      d="M92.672,144.373c-2.752,0-5.493-1.044-7.593-3.138L3.145,59.301c-4.194-4.199-4.194-10.992,0-15.18 c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0 c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z"
-                    ></path>
-                  </g>
+          <li id="toggleDropdown" title="Profile">
+            <a href="#" id="profile-btn">
+              <svg
+                viewBox="0 0 16 16"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="#000000"
+                width="36px"
+                height="36px"
+                class="avatar"
+              >
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g
+                  id="SVGRepo_tracerCarrier"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></g>
+                <g id="SVGRepo_iconCarrier">
+                  <path
+                    d="m 8 1 c -1.65625 0 -3 1.34375 -3 3 s 1.34375 3 3 3 s 3 -1.34375 3 -3 s -1.34375 -3 -3 -3 z m -1.5 7 c -2.492188 0 -4.5 2.007812 -4.5 4.5 v 0.5 c 0 1.109375 0.890625 2 2 2 h 8 c 1.109375 0 2 -0.890625 2 -2 v -0.5 c 0 -2.492188 -2.007812 -4.5 -4.5 -4.5 z m 0 0"
+                    fill="#888"
+                  ></path>
                 </g>
-              </g>
-            </svg>
+              </svg>
+            </a>
           </li>
-          <!-- dropdown -->
+          <!-- Account Dropdown -->
           <ul class="dropdown" id="dropdown">
             <li>
               <a href="#" title="Account Settings">Account Settings</a>
             </li>
-            <li>
-              <a href="#" id="logout">Logout</a>
+            <li id="logout">
+              <a href="#">Logout</a>
             </li>
           </ul>
         </ul>
+
+        <!-- Notification Dropdown -->
+        <ul class="notif-dropdown" id="notif-dropdown">
+          <div class="dialog-arrow"></div>
+          <header class="notif-header">
+            <h4>Notifications</h4>
+          </header>
+          <li>
+            <a href="#" title="Account Settings">Booking request from Rodrigez</a>
+          </li>
+          <li>
+            <a href="#" title="Account Settings">Booking request from Marcela</a>
+          </li>
+          <li>
+            <a href="#" title="Account Settings">Booking request from Andy</a>
+          </li>
+          <li>
+            <a href="#" title="Account Settings">Booking request from Cloe</a>
+          </li>
+          <li>
+            <a href="#" title="Account Settings">Booking request from Jin Ku</a>
+          </li>
+        </ul>
+      </ul>
       </header>
       <aside class="sidebar active">
         <nav>
           <h3>Management System</h3>
           <ul>
             <li>
-              <a href="#"> Dashboard</a>
+              <a href="#" title="Dashboard">Dashboard</a>
             </li>
             <li>
-              <a href="#">Orders</a>
+              <a href="#" title="Orders">Orders</a>
             </li>
             <li>
-              <a href="#">Menu</a>
+              <a href="#" title="Menu">Menu</a>
             </li>
             <li>
-              <a href="#">Bookings</a>
+              <a href="#" title="Bookings">Bookings</a>
             </li>
             <li>
-              <a href="#">Customers</a>
+              <a href="#" title="Customers">Customers</a>
             </li>
             <li>
-              <a href="#">Reports</a>
+              <a href="#" title="Reports">Reports</a>
             </li>
             <li>
-              <a href="#"> Settings</a>
+              <a href="#" title="Settings">Settings</a>
             </li>
           </ul>
         </nav>
@@ -167,25 +191,32 @@
         // If no client is found, redirect to auth.html
         if (!client || !client.isLoggedin) {
           window.location.href = "auth.html";
+        } else {
+          document.body.style.display = "block"; // Show page only if logged in
         }
 
         // dropdown toggle
         const openDropdown = document.getElementById("toggleDropdown");
+        const notifDropdown = document.getElementById("notif-toggle");
+        const notif = document.getElementById("notif-dropdown");
         const dropdown = document.getElementById("dropdown");
-        let isActive = false;
 
+        notifDropdown.addEventListener("click", function () {
+          event.stopPropagation(); // Prevent click from propagating to document
+          notif.classList.toggle("active");
+        });
 
         openDropdown.addEventListener("click", function () {
-          
           event.stopPropagation(); // Prevent click from propagating to document
           dropdown.classList.toggle("active");
-          isActive = !isActive;
+        });
 
-          if(isActive) {
-            document.getElementById("Capa_1").style.transform = "rotate(180deg)";
-            document.getElementById("Capa_1").style.transition = "transform 0.3s";
-          } else {
-            document.getElementById("Capa_1").style.transform = "rotate(0deg)";
+        document.addEventListener("click", function (event) {
+          if (
+            !notif.contains(event.target) &&
+            !notifDropdown.contains(event.target)
+          ) {
+            notif.classList.remove("active");
           }
         });
 
@@ -196,10 +227,11 @@
             !openDropdown.contains(event.target)
           ) {
             dropdown.classList.remove("active");
-            document.getElementById("Capa_1").style.transform = "rotate(0deg)";
-            document.getElementById("Capa_1").style.transition = "transform 0.3s";
+            
           }
         });
+
+        
 
         // Sidebar toggle
         document
