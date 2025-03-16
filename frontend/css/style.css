@@ -25,7 +25,7 @@ body {
 
 .site-header {
     background-color: #fff;
-    padding: 22px 3em 22px 1em;
+    padding: 6.5px 3em 6.5px 1em;
     grid-area: header;
     position: sticky;
     top: 0;
@@ -37,7 +37,7 @@ body {
 
 .auth-site-header {
     background-color: #16162F;
-    padding: 22px 4rem;
+    padding: 22px;
     grid-area: header;
     color: #fff;
 }
@@ -107,7 +107,8 @@ body {
     transition: .3s;
 }
 
-.site-header .notif-dropdown .dialog-arrow {
+.site-header .notif-dropdown .dialog-arrow, 
+.site-header .dropdown .dialog-arrow{
     position: absolute;
     top: -8px;  /* Adjust as needed */
     right: 40px;
@@ -117,10 +118,10 @@ body {
     border-top: 1px solid #e5e5e5; 
     border-left: 1px solid #e5e5e5;
     transform: rotate(45deg);
-
 }
 
-.site-header .notif-dropdown.active .notif-header {
+.site-header .notif-dropdown.active .notif-header, 
+.site-header .dropdown.active .profile-header {
     padding: 18px 14px;
     border-bottom: 1px solid #e5e5e5;
     width: 100%;
@@ -139,13 +140,13 @@ body {
     transition: .3s;
     scale: 1;
     position: absolute;
-    top: 80px;
+    top: 65px;
     border-radius: 8px;
     border: 1px solid #e5e5e5;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    right: 80px;
+    right: 75px;
     background-color: #fff;
-    width: 300px;
+    width: 350px;
 }
 
 .site-header .notif-dropdown.active li {
@@ -153,6 +154,40 @@ body {
     border-bottom: 1px solid #e5e5e5;
     font-size: 14px;
     width: 100%;
+}
+
+.site-header .notif-dropdown.active li.active {
+    background-color: #f5f5f5;
+    background-image: url('data:image/svg+xml,<svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="%23EE4B2B"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M12 9.5C13.3807 9.5 14.5 10.6193 14.5 12C14.5 13.3807 13.3807 14.5 12 14.5C10.6193 14.5 9.5 13.3807 9.5 12C9.5 10.6193 10.6193 9.5 12 9.5Z" fill="%23EE4B2B"></path></g></svg>');
+    background-position: right 10px center;
+    background-repeat: no-repeat;
+}
+
+#notif-toggle svg:hover #SVGRepo_iconCarrier path{
+    stroke: #666;
+}
+
+.notif-dropdown .notif-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0 0 8px 8px;
+    width: 100%;
+    padding: 18px;
+}
+
+.notif-footer a {
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 100;
+    text-transform: uppercase;
+    transition: .3s;
+}
+
+.notif-footer a:hover {
+    color: #666;
+    transition: .3s;
 }
 
 .site-header .notif-dropdown.active li:last-child {
@@ -166,6 +201,9 @@ body {
     transition: .3s;
 }
 
+.site-header .notif-dropdown.active li a:hover {
+    color: #333;
+}
 
 
 .site-header .dropdown.active {
@@ -177,13 +215,13 @@ body {
     transition: .3s;
     scale: 1;
     position: absolute;
-    top: 77px;
+    top: 65px;
     border: 1px solid #e5e5e5;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    right: 50px;
+    right: 17px;
     background-color: #fff;
-
+    width: 200px;
 }
 
 .dropdown.active li {
@@ -398,7 +436,7 @@ aside nav {
 
 aside nav h3 {
     color: #ffff;
-    padding: 35px 14px;
+    padding: 20px 14px;
     text-align: left;
     border-bottom: 1px solid #1e233d;
     margin: 0;
