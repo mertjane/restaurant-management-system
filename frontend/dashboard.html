@@ -201,22 +201,27 @@
           document.body.style.display = "block"; // Show page only if logged in
         }
 
-        // dropdown toggle
-        const openDropdown = document.getElementById("toggleDropdown");
-        const notifDropdown = document.getElementById("notif-toggle");
-        const notif = document.getElementById("notif-dropdown");
-        const dropdown = document.getElementById("dropdown");
+        // Element selectors for dropdown menus
+        const openDropdown = document.getElementById("toggleDropdown");    // Profile icon button
+        const notifDropdown = document.getElementById("notif-toggle");     // Notification icon button
+        const notif = document.getElementById("notif-dropdown");           // Notification dropdown menu
+        const dropdown = document.getElementById("dropdown");              // Profile dropdown menu
 
+        // Toggle notification dropdown and close profile dropdown
         notifDropdown.addEventListener("click", function () {
           event.stopPropagation(); // Prevent click from propagating to document
-          notif.classList.toggle("active");
+          dropdown.classList.remove("active"); // Close profile dropdown
+          notif.classList.toggle("active");    // Toggle notification dropdown
         });
 
+        // Toggle profile dropdown and close notification dropdown
         openDropdown.addEventListener("click", function () {
           event.stopPropagation(); // Prevent click from propagating to document
-          dropdown.classList.toggle("active");
+          notif.classList.remove("active");   // Close notification dropdown
+          dropdown.classList.toggle("active"); // Toggle profile dropdown
         });
 
+        // Close notification dropdown when clicking outside
         document.addEventListener("click", function (event) {
           if (
             !notif.contains(event.target) &&
@@ -226,7 +231,7 @@
           }
         });
 
-        // Close dropdown when clicking outside
+        // Close profile dropdown when clicking outside
         document.addEventListener("click", function (event) {
           if (
             !dropdown.contains(event.target) &&
