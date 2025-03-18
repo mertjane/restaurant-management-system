@@ -324,7 +324,7 @@ main .login form input:focus {
 
 }
 
-#username-error {
+#email-error {
     color: red;
     font-size: 13.5px;
     display: none;
@@ -349,7 +349,6 @@ footer {
     grid-area: footer;
     text-align: center;
     font-size: 13px;
-
 }
 
 

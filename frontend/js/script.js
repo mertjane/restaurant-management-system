@@ -1,9 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.querySelector("form");
-
-  const username = document.querySelector("#username");
+  const email = document.querySelector("#email");
   const password = document.querySelector("#password");
-  const usernameError = document.querySelector("#username-error");
+  const emailError = document.querySelector("#email-error");
   const pwdError = document.querySelector("#pwd-error");
   const btn = document.querySelector("button");
   isLoggedin = false;
@@ -17,20 +16,20 @@ document.addEventListener("DOMContentLoaded", function () {
     document.body.style.display = "block"; // Show page only if not logged in
   }
 
-  function validateUsername() {
-    let isUsernameValid =
-      username.value.length >= 5 && username.value.length <= 20;
+  function validateEmail() {
+    let regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    let isEmailValid = regex.test(email.value);
 
-    if (!isUsernameValid) {
-      usernameError.textContent =
-        "Username must be between 5 and 20 characters";
-      usernameError.style.display = "block";
+    if (!isEmailValid) {
+      emailError.textContent =
+        "Invalid Email Address";
+      emailError.style.display = "block";
     } else {
-      usernameError.style.display = "none";
+      emailError.style.display = "none";
     }
 
     // Disable button if any field is invalid
-    btn.disabled = !isUsernameValid;
+    btn.disabled = !isEmailValid;
   }
 
   function validatePwd() {
@@ -47,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
     btn.disabled = !isPasswordValid;
   }
 
-  username.addEventListener("input", validateUsername);
+  email.addEventListener("input", validateEmail);
   password.addEventListener("input", validatePwd);
 
   function showSuccessMessage() {
@@ -66,12 +65,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   form.addEventListener("submit", function (event) {
     event.preventDefault(); // Stop form submission if invalid
-    validateUsername();
+    validateEmail();
     validatePwd();
 
     const client = {
       userID: Math.floor(Math.random() * 1000),
-      username: username.value,
+      email: email.value,
       isLoggedin: true,
     };
 
@@ -83,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
     showSuccessMessage();
 
     // Disable inputs and button while processing
-    username.disabled = true;
+    email.disabled = true;
     password.disabled = true;
     btn.disabled = true;
     btn.style.cursor = "not-allowed";
