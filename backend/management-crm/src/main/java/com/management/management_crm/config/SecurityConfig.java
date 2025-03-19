@@ -21,7 +21,7 @@ public class SecurityConfig {
         http
                 .cors().and() // Enable CORS
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/register", "/auth/forgot-password", "/auth/reset-password", "/templates/**").permitAll()
+                        .requestMatchers("/auth/register", "/auth/forgot-password", "/auth/reset-password", "/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/frontend/**").permitAll() // Allow frontend files
                         .anyRequest().authenticated() // All other endpoints require authentication
                 )

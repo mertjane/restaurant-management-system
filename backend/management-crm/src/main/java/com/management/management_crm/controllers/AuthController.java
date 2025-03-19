@@ -58,5 +58,4 @@ public class AuthController {
             return ResponseEntity.status(500).body("Error registering user: " + e.getMessage());
         }
     }
-
 }

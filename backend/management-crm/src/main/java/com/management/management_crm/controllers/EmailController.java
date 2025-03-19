@@ -84,7 +84,7 @@ public class EmailController {
     @GetMapping("/auth/reset-password")
     public String showResetPasswordPage(@RequestParam String token, Model model) {
         model.addAttribute("token", token);
-        return "reset-password"; // Renders reset-password.html
+        return "reset-password.html"; // Renders reset-password.html
     }
 
     /*
