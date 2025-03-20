@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Restaurant Management System</title>
-    <link rel="stylesheet" href="/frontend/css/style.css" />
+    <link rel="stylesheet" href="/css/mainStyles.css" />
     <style>
       body {
         display: none; /* Hide the page initially */
@@ -80,9 +80,9 @@
                 placeholder="Enter your password"
               />
               <p id="pwd-error"></p>
-              <a href="#">Forgot password</a>
+              <a href="#" id="forgot-pwd-btn">Forgot password</a>
             </div>
-            <button type="submit">Login</button>
+            <button id="login-btn" type="submit">Login</button>
           </form>
         </section>
       </main>
@@ -90,6 +90,7 @@
         <p>&copy; 2025 Restaurant Management System</p>
       </footer>
     </div>
-    <script defer src="./js/script.js"></script>
   </body>
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/script.js"></script>
 </html>

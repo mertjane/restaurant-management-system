@@ -1,8 +1,10 @@
 package com.management.management_crm.controllers;
 
-import com.management.management_crm.dto.PasswordResetRequest;
-import com.management.management_crm.models.UserEntity;
-import com.management.management_crm.repository.UserRepository;
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -10,12 +12,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import com.management.management_crm.dto.PasswordResetRequest;
+import com.management.management_crm.models.UserEntity;
+import com.management.management_crm.repository.UserRepository;
 
 @Controller // Change from @RestController to @Controller
 public class EmailController {
@@ -29,9 +33,11 @@ public class EmailController {
     @Autowired
     private JavaMailSender mailSender;
 
-    /* Forgot Password - Sends reset link to email 
+    /*
+     * Forgot Password - Sends reset link to email
      * Step 1: We got email from page that user entered
-     * Step 2: Function takes email and checks for is it valid or not if its valid generates random token ID with UUID
+     * Step 2: Function takes email and checks for is it valid or not if its valid
+     * generates random token ID with UUID
      * Step 3: Wrap the token in a link and send in the mail
      */
     @PostMapping("/auth/forgot-password")
@@ -42,12 +48,13 @@ public class EmailController {
             String email = requestBody.get("email"); // Getting email from body
 
             if (email == null || email.isEmpty()) {
-                return ResponseEntity.badRequest().body("Email is required");
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Email is required"));
             }
 
-            Optional<UserEntity> userOptional = userRepository.findByEmail(email); // Finds user with email 
+            Optional<UserEntity> userOptional = userRepository.findByEmail(email); // Finds user with email
             if (!userOptional.isPresent()) {
-                return ResponseEntity.badRequest().body("No user found with this email");
+                return ResponseEntity.badRequest()
+                        .body(Map.of("success", false, "message", "No user found with this email"));
             }
 
             UserEntity user = userOptional.get();
@@ -62,15 +69,16 @@ public class EmailController {
             String resetLink = "http://localhost:8080/auth/reset-password?token=" + resetToken;
             sendResetEmail(email, resetLink);
 
-            return ResponseEntity.ok("Password reset link sent to your email");
+            return ResponseEntity.ok(Map.of("success", true, "message", "Password reset link sent to your email"));
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error processing forgot password: " + e.getMessage());
         }
     }
 
-    /* Send Reset Email Function 
-    *  Sends an email includes reset link
-    */
+    /*
+     * Send Reset Email Function
+     * Sends an email includes reset link
+     */
     private void sendResetEmail(String toEmail, String resetLink) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmail);
@@ -92,39 +100,41 @@ public class EmailController {
      * Step 1: Takes token as a parameter from url and takes from body new password
      */
     @PostMapping("/auth/reset-password")
-    public ResponseEntity<String> resetPassword(
+    public ResponseEntity<Map<String, Object>> resetPassword(
             @RequestParam String token,
             @RequestBody PasswordResetRequest request) {
 
         // try and catch block for avoid server crash
-        try { 
-            // Check inputs are they entered or not 
+        try {
+            // Check inputs are they entered or not
             if (request.getNewPassword() == null || request.getConfirmPassword() == null ||
                     request.getNewPassword().isEmpty() || request.getConfirmPassword().isEmpty()) {
-                return ResponseEntity.badRequest().body("Both password fields are required.");
+                return ResponseEntity.badRequest()
+                        .body(Map.of("success", false, "message", "Both password fields are required."));
             }
 
             // Checks both passwords are match
             if (!request.getNewPassword().equals(request.getConfirmPassword())) {
-                return ResponseEntity.badRequest().body("Passwords do not match.");
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Passwords do not match."));
             }
 
             // Find user by reset token
             Optional<UserEntity> userOptional = userRepository.findByResetToken(token);
             if (!userOptional.isPresent()) {
-                return ResponseEntity.badRequest().body("Invalid or expired reset token.");
+                return ResponseEntity.badRequest()
+                        .body(Map.of("success", false, "message", "Invalid or expired reset token."));
             }
 
-            
             UserEntity user = userOptional.get();
             user.setPassword(passwordEncoder.encode(request.getNewPassword()));
             user.setResetToken(null); // Clear reset token
             user.setUpdatedAt(LocalDateTime.now());
             userRepository.save(user);
 
-            return ResponseEntity.ok("Password reset successfully.");
+            return ResponseEntity.ok(Map.of("success", true, "message", "Password reset successfully."));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Error resetting password: " + e.getMessage());
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("success", false, "message", "Error resetting password: " + e.getMessage()));
         }
     }
 

@@ -1,10 +1,11 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector("form");
   const email = document.querySelector("#email");
   const password = document.querySelector("#password");
   const emailError = document.querySelector("#email-error");
   const pwdError = document.querySelector("#pwd-error");
-  const btn = document.querySelector("button");
+  const forgotPwdBtn = document.querySelector("#forgot-pwd-btn");
+  const loginBtn = document.querySelector("#login-btn");
   isLoggedin = false;
 
   const client = JSON.parse(sessionStorage.getItem("client"));
@@ -21,15 +22,14 @@ document.addEventListener("DOMContentLoaded", function () {
     let isEmailValid = regex.test(email.value);
 
     if (!isEmailValid) {
-      emailError.textContent =
-        "Invalid Email Address";
+      emailError.textContent = "Invalid Email Address";
       emailError.style.display = "block";
     } else {
       emailError.style.display = "none";
     }
 
     // Disable button if any field is invalid
-    btn.disabled = !isEmailValid;
+    loginBtn.disabled = !isEmailValid;
   }
 
   function validatePwd() {
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
       pwdError.style.display = "none";
     }
 
-    btn.disabled = !isPasswordValid;
+    loginBtn.disabled = !isPasswordValid;
   }
 
   email.addEventListener("input", validateEmail);
@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
       isLoggedin: true,
     };
 
-    if (btn.disabled) {
+    if (loginBtn.disabled) {
       console.log("Form is invalid");
       return;
     }
@@ -84,9 +84,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // Disable inputs and button while processing
     email.disabled = true;
     password.disabled = true;
-    btn.disabled = true;
-    btn.style.cursor = "not-allowed";
-    btn.textContent = "Logging in..."; // Show a loading state
+    loginBtn.disabled = true;
+    loginBtn.style.cursor = "not-allowed";
+    loginBtn.textContent = "Logging in..."; // Show a loading state
 
     setTimeout(() => {
       window.sessionStorage.setItem("client", JSON.stringify(client));
@@ -94,5 +94,33 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 2500);
 
     form.reset();
+  });
+
+  forgotPwdBtn.addEventListener("click", async (e) => {
+    if (loginBtn) {
+      loginBtn.style.cursor = "not-allowed";
+      loginBtn.textContent = "Loading...";
+    }
+
+    const emailInput = document.querySelector("#email");
+    const email = emailInput.value.trim();
+
+    if (!email) {
+      document.querySelector("#email-error").textContent =
+        "Please enter your email";
+      return;
+    }
+
+    // Call the API function
+    const result = await api.forgotPassword(email);
+
+    if (result.success) {
+      console.log(result.message || "Password reset link sent to your email");
+      setTimeout(() => {
+        window.location.href = "email-sent-success.html";
+      }, 2500);
+    } else {
+      console.log(result.message || "Failed to send reset link");
+    }
   });
 });

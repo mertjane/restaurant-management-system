@@ -1,15 +1,22 @@
 package com.management.management_crm.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    private CorsConfigurationSource corsConfigurationSource; // Inject the bean from CorsConfig
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -19,19 +26,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors().and() // Enable CORS
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/register", "/auth/forgot-password", "/auth/reset-password", "/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/frontend/**").permitAll() // Allow frontend files
-                        .anyRequest().authenticated() // All other endpoints require authentication
-                )
-                .csrf().disable() // Disable CSRF for simplicity (enable in production with proper config)
-                .formLogin()
-                    .loginPage("http://localhost:5500/frontend/auth.html") // Set custom login page URL
-                    .permitAll()
-                    .defaultSuccessUrl("http://localhost:5500/frontend/dashboard.html", true)
-                .and()
-                .httpBasic().disable(); // Disable basic auth for testing
+                .cors(cors -> cors.configurationSource(corsConfigurationSource)) // Use the injected CORS config
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/**", "/auth.html", "/email-sent-success.html", "/password-reset-success.html", "/auth/register", "/auth/forgot-password", "/auth/reset-password", "/css/**",
+                                "/js/**", "/images/**")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/auth/reset-password").permitAll() // Explicitly allow GET
+                        .requestMatchers(HttpMethod.POST, "/auth/reset-password").permitAll() // Explicitly allow POST
+                        .requestMatchers("/frontend/**").permitAll()
+                        .anyRequest().authenticated())
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
         return http.build();
     }
 }
