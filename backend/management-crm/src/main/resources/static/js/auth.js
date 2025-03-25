@@ -8,10 +8,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginBtn = document.querySelector("#login-btn");
   isLoggedin = false;
 
-  const client = JSON.parse(sessionStorage.getItem("client"));
+  const token = sessionStorage.getItem("token");
 
   // If client exists and is logged in, redirect to dashboard
-  if (client && client.isLoggedin) {
+  if (token) {
     window.location.href = "dashboard.html";
   } else {
     document.body.style.display = "block"; // Show page only if not logged in
@@ -63,53 +63,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 3000); // Display message for 3 seconds
   }
 
-  form.addEventListener("submit", function (event) {
-    event.preventDefault(); // Stop form submission if invalid
-    validateEmail();
-    validatePwd();
-
-    const client = {
-      userID: Math.floor(Math.random() * 1000),
-      email: email.value,
-      isLoggedin: true,
-    };
-
-    if (loginBtn.disabled) {
-      console.log("Form is invalid");
-      return;
-    }
-    console.log(client);
-    showSuccessMessage();
-
-    // Disable inputs and button while processing
-    email.disabled = true;
-    password.disabled = true;
-    loginBtn.disabled = true;
-    loginBtn.style.cursor = "not-allowed";
-    loginBtn.textContent = "Logging in..."; // Show a loading state
-
-    setTimeout(() => {
-      window.sessionStorage.setItem("client", JSON.stringify(client));
-      window.location.href = "dashboard.html"; // Redirect after timeout
-    }, 2500);
-
-    form.reset();
-  });
-
   forgotPwdBtn.addEventListener("click", async (e) => {
-    if (loginBtn) {
-      loginBtn.style.cursor = "not-allowed";
-      loginBtn.textContent = "Loading...";
-    }
+    e.preventDefault();
 
     const emailInput = document.querySelector("#email");
     const email = emailInput.value.trim();
 
     if (!email) {
-      document.querySelector("#email-error").textContent =
-        "Please enter your email";
+      emailError.style.display = "block";
+      emailError.textContent = "Please enter your email";
       return;
     }
+
+    // If email is valid, proceed with UI update and API call
+    emailError.style.display = "none"; // Clear any previous error
+    loginBtn.style.cursor = "not-allowed";
+    loginBtn.textContent = "Loading...";
 
     // Call the API function
     const result = await api.forgotPassword(email);
@@ -122,5 +91,63 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       console.log(result.message || "Failed to send reset link");
     }
+  });
+
+  // login function
+  async function handleLogin(event) {
+    event.preventDefault();
+
+    const emailValue = email.value; // Use .value to get the input value
+    const passwordValue = password.value;
+
+    const result = await api.login({
+      email: emailValue,
+      password: passwordValue,
+    });
+
+    if (result.success) {
+      console.log(result.message);
+      if (result.token) {
+        sessionStorage.setItem("token", result.token);
+      }
+
+      setTimeout(() => {
+        window.location.href = "/dashboard.html"; // redirect to dashboard
+      }, 1200);
+    } else {
+      console.log(result.message);
+    }
+
+    // Re-enable form elements after login attempt
+    email.disabled = false;
+    password.disabled = false;
+    loginBtn.disabled = false;
+    loginBtn.style.cursor = "pointer";
+    loginBtn.textContent = "Login"; // Reset button text
+  }
+
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault(); // Stop form submission if invalid
+    validateEmail();
+    validatePwd();
+
+    if (loginBtn.disabled) {
+      console.log("Form is invalid");
+      return;
+    }
+
+    showSuccessMessage();
+
+    // Disable inputs and button while processing
+    email.disabled = true;
+    password.disabled = true;
+    loginBtn.disabled = true;
+    loginBtn.style.cursor = "not-allowed";
+    loginBtn.textContent = "Logging in..."; // Show a loading state
+
+    // Call handleLogin
+    await handleLogin(event);
+
+    form.reset();
   });
 });

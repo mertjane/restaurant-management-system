@@ -6,12 +6,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -66,7 +66,7 @@ public class EmailController {
             userRepository.save(user);
 
             // Send email with reset link
-            String resetLink = "http://localhost:8080/auth/reset-password?token=" + resetToken;
+            String resetLink = "http://localhost:5173/login?token=" + resetToken;
             sendResetEmail(email, resetLink);
 
             return ResponseEntity.ok(Map.of("success", true, "message", "Password reset link sent to your email"));
@@ -89,10 +89,27 @@ public class EmailController {
     }
 
     /* Display Reset Password Form */
+    /*
+     * @GetMapping("/auth/reset-password")
+     * public String showResetPasswordPage(@RequestParam String token, Model model)
+     * {
+     * model.addAttribute("token", token);
+     * return "reset-password.html"; // Renders reset-password.html
+     * }
+     */
+
+    /* Display Reset Password Form */
+
     @GetMapping("/auth/reset-password")
-    public String showResetPasswordPage(@RequestParam String token, Model model) {
-        model.addAttribute("token", token);
-        return "reset-password.html"; // Renders reset-password.html
+    public ResponseEntity<Map<String, Object>> showResetPasswordPage(@RequestParam String token) {
+        Optional<UserEntity> userOptional = userRepository.findByResetToken(token);
+        if (!userOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("success", false, "message", "Invalid or expired reset token"));
+        }
+
+        // Return JSON response instead of redirect
+        return ResponseEntity.ok(Map.of("success", true, "message", "Token is valid"));
     }
 
     /*

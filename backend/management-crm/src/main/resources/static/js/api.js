@@ -61,4 +61,34 @@ const api = {
       };
     }
   },
+
+  // Login
+  login: async ({email, password}) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data || "Login failed");
+      }
+
+      return {
+        success: true,
+        message: data.message || "Login successful",
+        token: data.token, // only if using jwt version
+      };
+    } catch (err) {
+      return {
+        success: false,
+        message: err.message,
+      };
+    }
+  },
 };
