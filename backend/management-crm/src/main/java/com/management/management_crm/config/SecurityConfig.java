@@ -95,6 +95,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/customers/**").permitAll()
+                        .requestMatchers("/user/**").permitAll()
                         .requestMatchers("/restaurant/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/restaurant/**").permitAll()

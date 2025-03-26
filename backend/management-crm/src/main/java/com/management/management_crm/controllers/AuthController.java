@@ -1,11 +1,9 @@
 package com.management.management_crm.controllers;
 
-import com.management.management_crm.dto.LoginRequest;
-import com.management.management_crm.models.UserEntity;
-import com.management.management_crm.repository.UserRepository;
-
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,14 +11,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
+import com.management.management_crm.dto.LoginRequest;
+import com.management.management_crm.dto.UserDTO;
+import com.management.management_crm.models.UserEntity;
+import com.management.management_crm.repository.UserRepository;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
@@ -36,7 +39,7 @@ public class AuthController {
     private long expirationTime;
 
     /* @Post Register User (restaurant admin) to db */
-    @PostMapping("/auth/register")
+    @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody Map<String, String> requestBody) {
         try {
             // Extract email and password from request body
@@ -73,7 +76,7 @@ public class AuthController {
     }
 
     /* @POST Method Login User */
-    @PostMapping("/auth/login")
+    @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
         try {
             String email = loginRequest.getEmail();
@@ -105,10 +108,19 @@ public class AuthController {
                     .signWith(SignatureAlgorithm.HS512, secretKey.getBytes())
                     .compact();
 
-            // Return token in response
+            // Create user response DTO (excluding sensitive fields like password)
+            UserDTO userDTO = new UserDTO(
+                    user.getId(),
+                    user.getEmail(),
+                    user.getResetToken(),
+                    user.getCreatedAt(),
+                    user.getUpdatedAt());
+
+            // Return token and user info in response
             return ResponseEntity.ok(Map.of(
                     "message", "Login successful",
-                    "token", token));
+                    "token", token,
+                    "user", userDTO));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error logging in: " + e.getMessage()));
         }

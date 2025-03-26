@@ -18,14 +18,14 @@ import com.management.management_crm.models.CustomerEntity;
 import com.management.management_crm.repository.CustomerRepository;
 
 @RestController
-@RequestMapping("/customers")
+@RequestMapping("/customers") // Defined root endpoint
 public class CustomersController {
 
     @Autowired
     private CustomerRepository customerRepository;
 
     // @Get Method for fetching all customers
-    @GetMapping("/customers")
+    @GetMapping()  // No need to give endpoint we have already defined root endpoint above
     public List<CustomerEntity> getAllCustomers() {
         return customerRepository.findAll();
     }
