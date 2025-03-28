@@ -97,6 +97,8 @@ public class SecurityConfig {
                         .requestMatchers("/customers/**").permitAll()
                         .requestMatchers("/user/**").permitAll()
                         .requestMatchers("/restaurant/**").permitAll()
+                        .requestMatchers("/bookings/**").permitAll()
+                        .requestMatchers("/menu/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/restaurant/**").permitAll()
                         .requestMatchers("/auth/**", "/auth.html", "/email-sent-success.html", "/dashboard.html",
