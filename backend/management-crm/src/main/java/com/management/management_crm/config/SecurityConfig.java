@@ -45,7 +45,6 @@ public class SecurityConfig {
     }
 } */
 
-
 package com.management.management_crm.config;
 
 import org.springframework.context.annotation.Bean;
@@ -76,6 +75,7 @@ public class SecurityConfig {
         configuration.addAllowedMethod(HttpMethod.GET);
         configuration.addAllowedMethod(HttpMethod.POST);
         configuration.addAllowedMethod(HttpMethod.PUT);
+        configuration.addAllowedMethod(HttpMethod.PATCH);
         configuration.addAllowedMethod(HttpMethod.DELETE);
         configuration.addAllowedMethod(HttpMethod.OPTIONS); // Allow preflight requests
         configuration.addAllowedHeader("Authorization");
@@ -99,11 +99,13 @@ public class SecurityConfig {
                         .requestMatchers("/restaurant/**").permitAll()
                         .requestMatchers("/bookings/**").permitAll()
                         .requestMatchers("/menu/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/bookings/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/restaurant/**").permitAll()
                         .requestMatchers("/auth/**", "/auth.html", "/email-sent-success.html", "/dashboard.html",
-                                "/password-reset-success.html", "/reset-password.html", "/auth/register", "/auth/login", 
-                                "/dashboard", "/auth/forgot-password", "/users", "/customers", "/restaurant", "/auth/reset-password", "/css/**",
+                                "/password-reset-success.html", "/reset-password.html", "/auth/register", "/auth/login",
+                                "/dashboard", "/auth/forgot-password", "/users", "/customers", "/restaurant",
+                                "/auth/reset-password", "/css/**",
                                 "/js/**", "/images/**")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth/reset-password").permitAll() // Explicitly allow GET

@@ -23,6 +23,8 @@ public class BookingDTO {
         this.customer = customer;
     }
 
+    
+
     // Getters
     public Long getID() {
         return id;
