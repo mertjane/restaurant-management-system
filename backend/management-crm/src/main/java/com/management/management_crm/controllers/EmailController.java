@@ -88,6 +88,30 @@ public class EmailController {
         mailSender.send(message);
     }
 
+    /*
+     * Send Booking Confirmation Email Function
+     */
+    public void sendBookingStatus(String toEmail, String message) {
+        SimpleMailMessage bookingMessage = new SimpleMailMessage();
+        bookingMessage.setTo(toEmail);
+        bookingMessage.setSubject("Booking Status");
+        bookingMessage.setText(message);
+        bookingMessage.setFrom("mck0391@gmail.com");
+        mailSender.send(bookingMessage);
+    }
+
+    /*
+     * Send Booking Request taken email Function
+     */
+    public void sendAutoReply(String toEmail, String message) {
+        SimpleMailMessage autoMessage = new SimpleMailMessage();
+        autoMessage.setTo(toEmail);
+        autoMessage.setSubject("Booking Request Taken");
+        autoMessage.setText(message);
+        autoMessage.setFrom("mck0391@gmail.com"); // Replace with restaurant email
+        mailSender.send(autoMessage);
+    }
+
     /* Display Reset Password Form */
     /*
      * @GetMapping("/auth/reset-password")

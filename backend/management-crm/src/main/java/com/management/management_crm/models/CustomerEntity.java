@@ -1,6 +1,7 @@
 package com.management.management_crm.models;
 
 import java.math.BigInteger;
+import java.time.OffsetDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,6 +30,9 @@ public class CustomerEntity {
     @Column(name = "phone")
     private BigInteger phone;
 
+    @Column(name = "created_at", updatable = false)
+    private OffsetDateTime createdAt; 
+
     // Foreign Key Relation to Restaurant
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false) // Defines the FK column
@@ -38,13 +42,13 @@ public class CustomerEntity {
     public CustomerEntity() {
     }
 
-    public CustomerEntity(Long id, String name, String email, BigInteger phone, RestaurantEntity restaurant) {
+    public CustomerEntity(Long id, String name, String email, BigInteger phone, OffsetDateTime createdAt, RestaurantEntity restaurant) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.phone = phone;
+        this.createdAt = createdAt;
         this.restaurant = restaurant;
-
     }
 
     public Long getId() {
@@ -77,6 +81,14 @@ public class CustomerEntity {
 
     public void setPhone(BigInteger phone) {
         this.phone = phone;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public RestaurantEntity getRestaurant() {

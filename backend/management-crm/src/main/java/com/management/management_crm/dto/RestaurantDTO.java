@@ -14,6 +14,14 @@ public class RestaurantDTO {
         this.user = user;
     }
 
+    // Constructor that accepts only id, name, and websiteUrl
+    public RestaurantDTO(Long id, String name, String websiteUrl) {
+        this.id = id;
+        this.name = name;
+        this.websiteUrl = websiteUrl;
+        this.user = null; // Or assign a default value if needed
+    }
+
     // Getters
     public Long getId() {
         return id;

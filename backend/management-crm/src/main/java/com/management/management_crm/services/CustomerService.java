@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.management.management_crm.dto.CustomerDTO;
-
 import com.management.management_crm.models.CustomerEntity;
 import com.management.management_crm.repository.CustomerRepository;
 
@@ -34,6 +33,7 @@ public class CustomerService {
                 customer.getId(),
                 customer.getName(),
                 customer.getEmail(),
-                customer.getPhone()));
+                customer.getPhone(),
+                customer.getCreatedAt()));
     }
 }

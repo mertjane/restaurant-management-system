@@ -4,24 +4,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.management.management_crm.dto.BookingDTO;
-
 import com.management.management_crm.models.BookingEntity;
 import com.management.management_crm.repository.BookingRepository;
 import com.management.management_crm.services.BookingService;
@@ -34,6 +31,19 @@ public class BookingController {
 
     @Autowired
     private BookingRepository bookingRepository;
+
+    // @Post Method for creating a new booking
+    @PostMapping("/restaurant/{restaurantId}/create-new-booking")
+    public ResponseEntity<BookingDTO> createBooking(
+            @PathVariable Long restaurantId,
+            @RequestBody BookingDTO bookingDTO) {
+        // Log the request body
+        System.out.println("Received booking request: " + bookingDTO);
+
+        BookingDTO createdBooking = bookingService.createBooking(restaurantId, bookingDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdBooking);
+    }
+    
 
     // @Get Method for fetching all bookings
     @GetMapping()
@@ -63,6 +73,7 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.updateBookingById(id, bookingDTO));
     }
 
+    // Filter Bookings Method
     @GetMapping("/restaurant/{restaurantId}/filter")
     public ResponseEntity<Page<BookingDTO>> filterBookings(
             @PathVariable Long restaurantId,
@@ -81,15 +92,13 @@ public class BookingController {
                         .collect(Collectors.toList())
                 : null;
 
-                
-
         Page<BookingDTO> filteredBookings = bookingService.filterBookings(
                 restaurantId, status, startTime, endTime, startDate, endDate, customerNameList, pageable);
 
         return ResponseEntity.ok(filteredBookings);
     }
 
-    // New search endpoint
+    // Search Bookings By Customer Name Endpoint
     @GetMapping("/restaurant/{restaurantId}/search")
     public ResponseEntity<Page<BookingDTO>> searchBookings(
             @PathVariable Long restaurantId,

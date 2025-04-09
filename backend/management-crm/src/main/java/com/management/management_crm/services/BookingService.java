@@ -1,29 +1,90 @@
 package com.management.management_crm.services;
 
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.management.management_crm.dto.BookingDTO;
-
-import org.springframework.data.domain.Pageable;
-
-import com.management.management_crm.dto.CustomerDTO;
-import com.management.management_crm.models.BookingEntity;
-import com.management.management_crm.repository.BookingRepository;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import com.management.management_crm.controllers.EmailController;
+import com.management.management_crm.dto.BookingDTO;
+import com.management.management_crm.dto.CustomerDTO;
+import com.management.management_crm.dto.RestaurantDTO;
+import com.management.management_crm.models.BookingEntity;
+import com.management.management_crm.models.CustomerEntity;
+import com.management.management_crm.models.RestaurantEntity;
+import com.management.management_crm.repository.BookingRepository;
+import com.management.management_crm.repository.CustomerRepository;
+import com.management.management_crm.repository.RestaurantRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class BookingService {
 
     @Autowired
     private BookingRepository bookingRepository;
+
+    @Autowired
+    private RestaurantRepository restaurantRepository;
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private EmailController emailController;
+
+    // Create Booking
+    @Transactional
+    public BookingDTO createBooking(Long restaurantId, BookingDTO bookingDTO) {
+        // Fetch the restaurant based on restaurantId from the params
+        RestaurantEntity restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+
+        // Create the customer and associate it with the restaurant
+        CustomerEntity customerEntity = new CustomerEntity();
+        customerEntity.setName(bookingDTO.getCustomer().getName());
+        customerEntity.setEmail(bookingDTO.getCustomer().getEmail());
+        customerEntity.setPhone(bookingDTO.getCustomer().getPhone());
+        customerEntity.setRestaurant(restaurant); // Ensure restaurant is set
+
+        // Save the customer entity
+        customerRepository.save(customerEntity);
+
+        // Now, create the booking and associate it with the customer and restaurant
+        BookingEntity bookingEntity = new BookingEntity();
+        bookingEntity.setDate(bookingDTO.getDate());
+        bookingEntity.setTime(bookingDTO.getTime());
+        bookingEntity.setNumPeople(bookingDTO.getNumPeople());
+        bookingEntity.setStatus(bookingDTO.getStatus());
+        bookingEntity.setCustomer(customerEntity);
+        bookingEntity.setRestaurant(restaurant);
+
+        // Save the booking entity
+        bookingRepository.save(bookingEntity);
+
+        // Send Auto Email to customer
+        String customerEmail = bookingEntity.getCustomer().getEmail();
+        String message = String.format(
+                "Dear %s, \n\nThank you for your booking request. We will get back to you shortly.\n\nBest regards,\n%s",
+                bookingEntity.getCustomer().getName(), bookingEntity.getRestaurant().getName());
+        emailController.sendAutoReply(customerEmail, message);
+
+        // Convert the saved entities to DTOs and return the response
+        return new BookingDTO(
+                bookingEntity.getId(),
+                bookingEntity.getDate(),
+                bookingEntity.getTime(),
+                bookingEntity.getNumPeople(),
+                bookingEntity.getStatus(),
+                new RestaurantDTO(restaurant.getId(), restaurant.getName(), restaurant.getWebsiteUrl()),
+                new CustomerDTO(customerEntity.getId(), customerEntity.getName(), customerEntity.getEmail(),
+                        customerEntity.getPhone(), customerEntity.getCreatedAt()));
+    }
 
     // Get Booking by ID - Returns BookingDTO with only booking and customer details
     public BookingDTO getBookingById(Long id) {
@@ -36,7 +97,8 @@ public class BookingService {
                 entity.getCustomer().getId(),
                 entity.getCustomer().getName(),
                 entity.getCustomer().getEmail(),
-                entity.getCustomer().getPhone());
+                entity.getCustomer().getPhone(),
+                entity.getCustomer().getCreatedAt());
 
         // Create BookingDTO without restaurant details
         return new BookingDTO(
@@ -54,6 +116,9 @@ public class BookingService {
         BookingEntity entity = bookingRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Booking not found with id: " + id));
 
+        // Store old status for comparison
+        String oldStatus = entity.getStatus();
+
         // Update only the fields that are provided (not null) in the incoming DTO
         if (bookingDTO.getDate() != null) {
             entity.setDate(bookingDTO.getDate());
@@ -67,16 +132,37 @@ public class BookingService {
         if (bookingDTO.getStatus() != null) {
             entity.setStatus(bookingDTO.getStatus());
         }
-        // Not updating customer or restaurant relationships as per your requirement
 
+        // Not updating customer or restaurant relationships as per your requirement
         BookingEntity updatedEntity = bookingRepository.save(entity);
+
+        // Check if status was changed to Confirmed or Cancelled
+        if (bookingDTO.getStatus() != null && !bookingDTO.getStatus().equals(oldStatus)) {
+            String customerEmail = updatedEntity.getCustomer().getEmail();
+            String status = updatedEntity.getStatus();
+
+            if ("Confirmed".equals(status)) {
+                String message = String.format(
+                        "Dear %s, \n\nYour booking request has been confirmed. See you on %s at %s. We look forward to serving you!\n\nBest regards,\n%s",
+                        updatedEntity.getCustomer().getName(), updatedEntity.getDate(), updatedEntity.getTime(),
+                        updatedEntity.getRestaurant().getName());
+                emailController.sendBookingStatus(customerEmail, message);
+            } else if ("Cancelled".equals(status)) {
+                String message = String.format(
+                        "Dear %s, \n\nYour booking has been cancelled. If this was a mistake or you need assistance, please contact us.\n\nBest regards,\n%s",
+                        updatedEntity.getCustomer().getName(), updatedEntity.getRestaurant().getName());
+                emailController.sendBookingStatus(customerEmail, message);
+
+            }
+        }
 
         // Create CustomerDTO with all customer fields we want to return
         CustomerDTO customerDTO = new CustomerDTO(
                 updatedEntity.getCustomer().getId(),
                 updatedEntity.getCustomer().getName(),
                 updatedEntity.getCustomer().getEmail(),
-                updatedEntity.getCustomer().getPhone());
+                updatedEntity.getCustomer().getPhone(),
+                updatedEntity.getCustomer().getCreatedAt());
 
         // Return updated DTO without restaurant details
         return new BookingDTO(
@@ -138,7 +224,8 @@ public class BookingService {
                         booking.getCustomer().getId(),
                         booking.getCustomer().getName(),
                         booking.getCustomer().getEmail(),
-                        booking.getCustomer().getPhone())));
+                        booking.getCustomer().getPhone(),
+                        booking.getCustomer().getCreatedAt())));
     }
 
     // New search method
@@ -163,7 +250,8 @@ public class BookingService {
                         booking.getCustomer().getId(),
                         booking.getCustomer().getName(),
                         booking.getCustomer().getEmail(),
-                        booking.getCustomer().getPhone())));
+                        booking.getCustomer().getPhone(),
+                        booking.getCustomer().getCreatedAt())));    
     }
 
 }
