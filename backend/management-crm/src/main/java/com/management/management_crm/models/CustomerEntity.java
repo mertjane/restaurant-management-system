@@ -30,7 +30,7 @@ public class CustomerEntity {
     @Column(name = "phone")
     private BigInteger phone;
 
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", updatable = false, nullable = false)
     private OffsetDateTime createdAt; 
 
     // Foreign Key Relation to Restaurant

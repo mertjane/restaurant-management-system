@@ -2,6 +2,7 @@ package com.management.management_crm.services;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,6 +52,11 @@ public class BookingService {
         customerEntity.setEmail(bookingDTO.getCustomer().getEmail());
         customerEntity.setPhone(bookingDTO.getCustomer().getPhone());
         customerEntity.setRestaurant(restaurant); // Ensure restaurant is set
+
+        // Manually set createdAt if not using @CreationTimestamp
+        if (customerEntity.getCreatedAt() == null) {
+            customerEntity.setCreatedAt(OffsetDateTime.now()); // Set the current time
+        }
 
         // Save the customer entity
         customerRepository.save(customerEntity);
@@ -251,7 +257,7 @@ public class BookingService {
                         booking.getCustomer().getName(),
                         booking.getCustomer().getEmail(),
                         booking.getCustomer().getPhone(),
-                        booking.getCustomer().getCreatedAt())));    
+                        booking.getCustomer().getCreatedAt())));
     }
 
 }

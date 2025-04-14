@@ -72,4 +72,11 @@ public interface BookingRepository extends JpaRepository<BookingEntity, Long> {
                         @Param("restaurantId") Long restaurantId,
                         @Param("searchTerm") String searchTerm,
                         Pageable pageable);
+
+                        
+        @Query("SELECT b FROM BookingEntity b WHERE b.restaurant.id = :restaurantId AND b.date = :date")
+        List<BookingEntity> findAllByRestaurantIdAndDate(
+                        @Param("restaurantId") Long restaurantId,
+                        @Param("date") LocalDate date);
+
 }

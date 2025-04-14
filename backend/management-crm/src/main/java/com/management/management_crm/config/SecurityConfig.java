@@ -94,11 +94,14 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Use the defined CORS config
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        // Public endpoints
+                        .requestMatchers("/analytics/**").permitAll()
                         .requestMatchers("/customers/**").permitAll()
                         .requestMatchers("/user/**").permitAll()
                         .requestMatchers("/restaurant/**").permitAll()
                         .requestMatchers("/bookings/**").permitAll()
                         .requestMatchers("/menu/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/analytics/**").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/bookings/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/restaurant/**").permitAll()
