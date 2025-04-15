@@ -73,10 +73,13 @@ public interface BookingRepository extends JpaRepository<BookingEntity, Long> {
                         @Param("searchTerm") String searchTerm,
                         Pageable pageable);
 
-                        
         @Query("SELECT b FROM BookingEntity b WHERE b.restaurant.id = :restaurantId AND b.date = :date")
         List<BookingEntity> findAllByRestaurantIdAndDate(
                         @Param("restaurantId") Long restaurantId,
                         @Param("date") LocalDate date);
+
+        // Sort Bookings by date from today > future (custom sorting)
+        Page<BookingEntity> findByRestaurantIdAndDateGreaterThanEqual(Long restaurantId, LocalDate date,
+                        Pageable pageable);
 
 }

@@ -15,7 +15,7 @@ import com.management.management_crm.models.MenuEntity;
 import com.management.management_crm.repository.MenuRepository;
 
 @RestController
-@RequestMapping("/menu")
+@RequestMapping("/api/v1/menu")
 public class MenuController {
 
     @Autowired

@@ -40,7 +40,7 @@ public class EmailController {
      * generates random token ID with UUID
      * Step 3: Wrap the token in a link and send in the mail
      */
-    @PostMapping("/auth/forgot-password")
+    @PostMapping("/api/v1/auth/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> requestBody) {
 
         /* try and catch block for avoid server crash */
@@ -124,7 +124,7 @@ public class EmailController {
 
     /* Display Reset Password Form */
 
-    @GetMapping("/auth/reset-password")
+    @GetMapping("/api/v1/auth/reset-password")
     public ResponseEntity<Map<String, Object>> showResetPasswordPage(@RequestParam String token) {
         Optional<UserEntity> userOptional = userRepository.findByResetToken(token);
         if (!userOptional.isPresent()) {
@@ -140,7 +140,7 @@ public class EmailController {
      * Handle Password Reset Form Submission
      * Step 1: Takes token as a parameter from url and takes from body new password
      */
-    @PostMapping("/auth/reset-password")
+    @PostMapping("/api/v1/auth/reset-password")
     public ResponseEntity<Map<String, Object>> resetPassword(
             @RequestParam String token,
             @RequestBody PasswordResetRequest request) {

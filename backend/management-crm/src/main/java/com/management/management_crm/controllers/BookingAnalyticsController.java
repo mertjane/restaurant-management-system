@@ -15,7 +15,7 @@ import com.management.management_crm.dto.BookingAnalyticsDTO;
 import com.management.management_crm.services.BookingAnalyticsService;
 
 @RestController
-@RequestMapping("/analytics")
+@RequestMapping("/api/v1/analytics")
 public class BookingAnalyticsController {
   private final BookingAnalyticsService service;
 

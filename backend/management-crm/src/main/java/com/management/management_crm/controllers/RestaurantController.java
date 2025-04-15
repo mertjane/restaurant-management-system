@@ -14,7 +14,7 @@ import com.management.management_crm.dto.UserDTO;
 import com.management.management_crm.repository.RestaurantRepository;
 
 @RestController
-@RequestMapping("/restaurant")
+@RequestMapping("/api/v1/restaurant")
 public class RestaurantController {
     @Autowired
     private RestaurantRepository restaurantRepository;

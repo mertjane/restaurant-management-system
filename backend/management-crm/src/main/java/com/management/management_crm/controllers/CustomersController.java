@@ -20,7 +20,7 @@ import com.management.management_crm.repository.CustomerRepository;
 import com.management.management_crm.services.CustomerService;
 
 @RestController
-@RequestMapping("/customers") // Defined root endpoint
+@RequestMapping("/api/v1/customers") // Defined root endpoint
 public class CustomersController {
 
     private final CustomerService customerService;

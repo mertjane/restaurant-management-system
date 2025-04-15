@@ -1,12 +1,15 @@
 package com.management.management_crm.controllers;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +27,7 @@ import com.management.management_crm.repository.BookingRepository;
 import com.management.management_crm.services.BookingService;
 
 @RestController
-@RequestMapping("/bookings")
+@RequestMapping("/api/v1/bookings")
 public class BookingController {
     @Autowired
     private BookingService bookingService;
@@ -43,7 +46,6 @@ public class BookingController {
         BookingDTO createdBooking = bookingService.createBooking(restaurantId, bookingDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdBooking);
     }
-    
 
     // @Get Method for fetching all bookings
     @GetMapping()
@@ -107,6 +109,30 @@ public class BookingController {
 
         Page<BookingDTO> searchResults = bookingService.searchBookings(restaurantId, searchTerm, pageable);
         return ResponseEntity.ok(searchResults);
+    }
+
+
+    // Custom sorting endpoint for "today to future"
+    @GetMapping("/restaurant/{restaurantId}/sorted")
+    public ResponseEntity<Page<BookingEntity>> getBookingsByRestaurantSorted(
+            @PathVariable Long restaurantId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String sortType) {
+        Pageable pageable;
+        LocalDate today = LocalDate.now();
+
+        if ("today_to_future".equalsIgnoreCase(sortType)) {
+            pageable = PageRequest.of(page, size, Sort.by("date"));
+            Page<BookingEntity> bookings = bookingRepository.findByRestaurantIdAndDateGreaterThanEqual(restaurantId,
+                    today, pageable);
+            return ResponseEntity.ok(bookings);     
+        }
+
+        // Default fallback
+        pageable = PageRequest.of(page, size, Sort.by("date").ascending());
+        Page<BookingEntity> bookings = bookingRepository.findByRestaurantId(restaurantId, pageable);
+        return ResponseEntity.ok(bookings);
     }
 
 }

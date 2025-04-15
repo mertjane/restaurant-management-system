@@ -18,10 +18,10 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "booking_analytics", uniqueConstraints = {
+@Table(name = "customer_analytics", uniqueConstraints = {
     @UniqueConstraint(columnNames = { "restaurant_id", "date" })
 })
-public class BookingAnalyticsEntity {
+public class CustomerAnalyticsEntity {
   @Id
   @GeneratedValue(generator = "UUID")
   @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
@@ -33,23 +33,20 @@ public class BookingAnalyticsEntity {
   @Column(nullable = false)
   private LocalDate date;
 
-  @Column(name = "total_bookings", nullable = false)
-  private int totalBookings;
+  @Column(name = "total_customers", nullable = false)
+  private Long totalCusts;
 
-  @Column(name = "total_cust", nullable = false)
-  private BigDecimal totalCust;
+  @Column(name = "total_customer_change_percent", nullable = false)
+  private double totalCustsChange;
 
-  @Column(name = "cancelled_count", nullable = false)
-  private int cancelledCount;
+  @Column(name = "new_customers", nullable = false)
+  private Long newCusts;
 
-  @Column(name = "confirmed_count", nullable = false)
-  private int confirmedCount;
+  @Column(name = "new_customer_change_percent", nullable = false)
+  private double newCustsChange;
 
-  @Column(name = "pending_count", nullable = false)
-  private int pendingCount;
-
-  @Column(name = "peak_hour", nullable = false)
-  private LocalTime peakHour;
+  @Column(nullable = false)
+  private LocalDate peakDay;
 
   @CreationTimestamp
   @Column(name = "created_at", updatable = false)
@@ -60,27 +57,25 @@ public class BookingAnalyticsEntity {
   private LocalDateTime updatedAt;
 
   // --- Constructors ---
-  public BookingAnalyticsEntity() {
+  public CustomerAnalyticsEntity() {
   }
 
-  public BookingAnalyticsEntity(UUID id, Long restaurantId, LocalDate date, int totalBookings,
-      BigDecimal totalCust, int cancelledCount, int confirmedCount,
-      int pendingCount, LocalTime peakHour,
+  public CustomerAnalyticsEntity(UUID id, Long restaurantId, LocalDate date, Long totalCusts, double totalCustsChange,
+  Long newCusts, double newCustsChange, LocalDate peakDay,
       LocalDateTime createdAt, LocalDateTime updatedAt) {
     this.id = id;
     this.restaurantId = restaurantId;
     this.date = date;
-    this.totalBookings = totalBookings;
-    this.totalCust = totalCust;
-    this.cancelledCount = cancelledCount;
-    this.confirmedCount = confirmedCount;
-    this.pendingCount = pendingCount;
-    this.peakHour = peakHour;
+    this.totalCusts = totalCusts;
+    this.totalCustsChange = totalCustsChange;
+    this.newCusts = newCusts;
+    this.newCustsChange = newCustsChange;
+    this.peakDay = peakDay;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
 
-  // --- Getters and Setters ---
+  // Getters and Setters
   public UUID getId() {
     return id;
   }
@@ -105,52 +100,44 @@ public class BookingAnalyticsEntity {
     this.date = date;
   }
 
-  public int getTotalBookings() {
-    return totalBookings;
+  public Long getTotalCusts() {
+    return totalCusts;
   }
 
-  public void setTotalBookings(int totalBookings) {
-    this.totalBookings = totalBookings;
+  public void setTotalCusts(Long totalCusts) {
+    this.totalCusts = totalCusts;
   }
 
-  public BigDecimal getTotalCust() {
-    return totalCust;
+  public Long getNewCusts() {
+    return newCusts;
   }
 
-  public void setTotalCust(BigDecimal totalCust) {
-    this.totalCust = totalCust;
+  public void setNewCusts(Long newCusts) {
+    this.newCusts = newCusts;
   }
 
-  public int getCancelledCount() {
-    return cancelledCount;
+  public double getTotalCustsChange() {
+    return totalCustsChange;
   }
 
-  public void setCancelledCount(int cancelledCount) {
-    this.cancelledCount = cancelledCount;
+  public void setTotalCustsChange(double totalCustsChange) {
+    this.totalCustsChange = totalCustsChange;
   }
 
-  public int getConfirmedCount() {
-    return confirmedCount;
+  public double getNewCustsChange() {
+    return newCustsChange;
   }
 
-  public void setConfirmedCount(int confirmedCount) {
-    this.confirmedCount = confirmedCount;
+  public void setNewCustsChange(double newCustsChange) {
+    this.newCustsChange = newCustsChange;
   }
 
-  public int getPendingCount() {
-    return pendingCount;
+  public LocalDate getPeakDay() {
+    return peakDay;
   }
 
-  public void setPendingCount(int pendingCount) {
-    this.pendingCount = pendingCount;
-  }
-
-  public LocalTime getPeakHour() {
-    return peakHour;
-  }
-
-  public void setPeakHour(LocalTime peakHour) {
-    this.peakHour = peakHour;
+  public void setPeakDay(LocalDate peakDay) {
+    this.peakDay = peakDay;
   }
 
   public LocalDateTime getCreatedAt() {
@@ -168,4 +155,5 @@ public class BookingAnalyticsEntity {
   public void setUpdatedAt(LocalDateTime updatedAt) {
     this.updatedAt = updatedAt;
   }
+
 }

@@ -8,7 +8,7 @@ public class BookingAnalyticsDTO {
   private Long restaurantId;
   private LocalDate date;
   private int totalBookings;
-  private BigDecimal avgPartySize;
+  private BigDecimal totalCust;
   private int cancelledCount;
   private int confirmedCount;
   private int pendingCount;
@@ -19,12 +19,12 @@ public class BookingAnalyticsDTO {
   }
 
   public BookingAnalyticsDTO(Long restaurantId, LocalDate date, int totalBookings,
-      BigDecimal avgPartySize, int cancelledCount, int confirmedCount,
+      BigDecimal totalCust, int cancelledCount, int confirmedCount,
       int pendingCount, LocalTime peakHour) {
     this.restaurantId = restaurantId;
     this.date = date;
     this.totalBookings = totalBookings;
-    this.avgPartySize = avgPartySize;
+    this.totalCust = totalCust;
     this.cancelledCount = cancelledCount;
     this.confirmedCount = confirmedCount;
     this.pendingCount = pendingCount;
@@ -56,12 +56,12 @@ public class BookingAnalyticsDTO {
     this.totalBookings = totalBookings;
   }
 
-  public BigDecimal getAvgPartySize() {
-    return avgPartySize;
+  public BigDecimal getTotalCust() {
+    return totalCust;
   }
 
-  public void setAvgPartySize(BigDecimal avgPartySize) {
-    this.avgPartySize = avgPartySize;
+  public void setTotalCust(BigDecimal totalCust) {
+    this.totalCust = totalCust;
   }
 
   public int getCancelledCount() {

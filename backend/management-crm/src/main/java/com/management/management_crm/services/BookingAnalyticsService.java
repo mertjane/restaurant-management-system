@@ -38,9 +38,9 @@ public class BookingAnalyticsService {
         }
 
         int total = bookings.size();
-        BigDecimal avgSize = BigDecimal.valueOf(bookings.stream()
+        BigDecimal totalCust = BigDecimal.valueOf(bookings.stream()
                 .mapToInt(BookingEntity::getNumPeople)
-                .average().orElse(0));
+                .sum());
 
         int cancelled = (int) bookings.stream().filter(b -> b.getStatus().equalsIgnoreCase("Cancelled")).count();
         int confirmed = (int) bookings.stream().filter(b -> b.getStatus().equalsIgnoreCase("Confirmed")).count();
@@ -54,7 +54,7 @@ public class BookingAnalyticsService {
         entity.setRestaurantId(restaurantId);
         entity.setDate(date);
         entity.setTotalBookings(total);
-        entity.setAvgPartySize(avgSize);
+        entity.setTotalCust(totalCust);
         entity.setCancelledCount(cancelled);
         entity.setConfirmedCount(confirmed);
         entity.setPendingCount(pending);
@@ -70,7 +70,7 @@ public class BookingAnalyticsService {
                 saved.getRestaurantId(),
                 saved.getDate(),
                 saved.getTotalBookings(),
-                saved.getAvgPartySize(),
+                saved.getTotalCust(),
                 saved.getCancelledCount(),
                 saved.getConfirmedCount(),
                 saved.getPendingCount(),
@@ -83,7 +83,7 @@ public class BookingAnalyticsService {
                 .stream()
                 .map(a -> new BookingAnalyticsDTO(
                         a.getRestaurantId(), a.getDate(), a.getTotalBookings(),
-                        a.getAvgPartySize(), a.getCancelledCount(), a.getConfirmedCount(),
+                        a.getTotalCust(), a.getCancelledCount(), a.getConfirmedCount(),
                         a.getPendingCount(), a.getPeakHour()))
                 .collect(Collectors.toList());
     }
